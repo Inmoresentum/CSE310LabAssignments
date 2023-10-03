@@ -4,7 +4,7 @@ public class CheckingAccount extends BankAccount {
     private double overDraftLimit;
 
     public CheckingAccount(Integer accountNumber, String accountName, double balance, double overDraftLimit) {
-        super(accountNumber, accountName, balance);
+        super(accountNumber, accountName);
         this.overDraftLimit = overDraftLimit;
     }
 

@@ -38,7 +38,7 @@ public class BankAccount {
             throw new Exception("Minimum withdraw amount is 100");
         }
         if (this.balance - amount < 500.0) {
-            throw new IllegalStateException("Balance Can't go below 500");
+            throw new Exception("Balance Can't go below 500");
         }
         this.balance = this.balance - amount;
         var transaction = new Transaction(LocalDateTime.now(),

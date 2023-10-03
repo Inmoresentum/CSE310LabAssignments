@@ -52,7 +52,7 @@ public class Main {
             return;
         }
         var account = accountDB.get(accountID);
-        
+
         System.out.print("Please enter the deposit amount: ");
         tk = new StringTokenizer(br.readLine());
         var depositAmount = Double.parseDouble(tk.nextToken());

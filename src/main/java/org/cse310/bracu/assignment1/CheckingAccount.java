@@ -5,9 +5,8 @@ import java.time.LocalDateTime;
 public class CheckingAccount extends BankAccount {
     private double overDraftLimit;
 
-    public CheckingAccount(Integer accountNumber, String accountName, double balance, double overDraftLimit) {
+    public CheckingAccount(Integer accountNumber, String accountName, double overDraftLimit) {
         super(accountNumber, accountName);
-        super.setBalance(balance);
         this.overDraftLimit = overDraftLimit;
     }
 

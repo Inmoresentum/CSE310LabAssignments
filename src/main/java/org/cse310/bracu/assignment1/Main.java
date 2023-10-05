@@ -32,6 +32,24 @@ public class Main {
     }
 
     private static void handleBankAccountCreation() throws IOException {
+        System.out.println("1. Normal Account\n2. SavingAccount\n3. CheckingAccount");
+        System.out.print("Please enter the type of Bank Account that you want to create: ");
+        tk = new StringTokenizer(br.readLine());
+        var accountType = tk.nextToken();
+        createAccount(accountType);
+    }
+
+    private static void createAccount(String accountType) throws IOException {
+        switch (accountType) {
+            case "1" -> createNormalBankAccount();
+            case "2" -> createSavingBankAccount();
+            case "3" -> createCheckingBankAccount();
+            default -> System.out.println("Please enter a valid input and try again");
+        }
+    }
+
+
+    private static void createNormalBankAccount() throws IOException {
         System.out.print("Please enter the AccountName and Account ID [Integer] separated by a space: ");
         tk = new StringTokenizer(br.readLine());
         String accountName = tk.nextToken();
@@ -42,7 +60,38 @@ public class Main {
         }
         var curAccount = new BankAccount(accountId, accountName);
         accountDB.put(accountId, curAccount);
-        System.out.println("DONE");
+        System.out.println("Done");
+    }
+
+    private static void createSavingBankAccount() throws IOException {
+        System.out.print("Please enter the AccountName and Account ID [Integer] and Interest Rate separated by a space: ");
+        tk = new StringTokenizer(br.readLine());
+        String accountName = tk.nextToken();
+        var accountId = Integer.parseInt(tk.nextToken());
+        var interestRate = Double.parseDouble(tk.nextToken());
+        if (accountDB.containsKey(accountId)) {
+            System.out.println("The ID has already been taken! Please try again");
+            return;
+        }
+        var curAccount = new SavingAccount(accountId, accountName, interestRate);
+        accountDB.put(accountId, curAccount);
+        System.out.println("Done");
+    }
+
+    private static void createCheckingBankAccount() throws IOException {
+        System.out.print("Please enter the AccountName and Account ID [Integer] and Over Draft Limit separated by a space: ");
+        tk = new StringTokenizer(br.readLine());
+        String accountName = tk.nextToken();
+        var accountId = Integer.parseInt(tk.nextToken());
+        var overDraftLimit = Double.parseDouble(tk.nextToken());
+        if (accountDB.containsKey(accountId)) {
+            System.out.println("The ID has already been taken! Please try again");
+            return;
+        }
+        var curAccount = new CheckingAccount(accountId, accountName, overDraftLimit);
+        accountDB.put(accountId, curAccount);
+        System.out.println("Done");
+
     }
 
     private static void handleDepositAmount() throws IOException {

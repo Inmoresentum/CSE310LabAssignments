@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class BankAccount {
-    private final Integer accountNumber;
-    private final String accountName;
-    private double balance;
-    private final ArrayList<Transaction> listOfTransactions = new ArrayList<>();
+    protected final Integer accountNumber;
+    protected final String accountName;
+    protected double balance;
+    protected final ArrayList<Transaction> listOfTransactions = new ArrayList<>();
 
     public BankAccount(Integer accountNumber, String accountName) {
         this.accountNumber = accountNumber;

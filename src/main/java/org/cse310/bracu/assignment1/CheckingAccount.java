@@ -23,14 +23,14 @@ public class CheckingAccount extends BankAccount {
         if (amount < 100) {
             throw new Exception("Minimum withdraw amount is 100");
         }
-        if (this.getBalance() - amount + overDraftLimit < 500.0) {
+        if (this.balance - amount + overDraftLimit < 500.0) {
             throw new Exception("Balance Can't go below 500");
         }
-        this.setBalance(this.getBalance() - amount);
+        this.balance = this.balance - amount;
         var transaction = new Transaction(LocalDateTime.now(),
                 amount,
                 TransactionType.DEPOSIT,
-                this.getBalance());
+                this.balance);
         this.getListOfTransactions().add(transaction);
     }
 }

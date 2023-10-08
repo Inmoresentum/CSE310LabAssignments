@@ -24,7 +24,7 @@ public class Main {
                 case "3" -> handleWithDrawAmount();
                 case "4" -> handleCheckBalance();
                 case "5" -> handlePrintDetails();
-                default -> System.out.println("Please enter a valid number");
+                default -> System.out.println("Please enter a valid number [1-6]");
             }
             promptUser();
         }

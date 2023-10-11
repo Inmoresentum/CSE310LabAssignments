@@ -1,21 +1,25 @@
 package org.cse310.bracu.assignment2.service;
 
+import org.cse310.bracu.assignment2.entities.Course;
 import org.cse310.bracu.assignment2.entities.Student;
 import org.cse310.bracu.assignment2.entities.UserType;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class StudentService {
-    private Connection conn;
+    private final Connection connection;
 
-    public StudentService(Connection conn) {
-        this.conn = conn;
+    public StudentService(Connection connection) {
+        this.connection = connection;
     }
 
     public void addStudent(Student student) throws SQLException {
         String sql = "INSERT INTO User (userId, name, email, encryptedPassword, userType) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, student.getUserId());
             pstmt.setString(2, student.getName());
             pstmt.setString(3, student.getEmail());
@@ -25,7 +29,7 @@ public class StudentService {
         }
 
         sql = "INSERT INTO Student (userId, studentId, version) VALUES (?, ?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, student.getUserId());
             pstmt.setString(2, student.getStudentID());
             pstmt.setInt(3, student.getVersion());
@@ -35,13 +39,15 @@ public class StudentService {
 
     public Student findStudentById(String userId) throws SQLException {
         String sql = "SELECT * FROM User JOIN Student ON User.userId = Student.userId WHERE User.userId = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, userId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return new Student(rs.getString("userId"), rs.getString("name"), rs.getString("email"),
+                var student = new Student(rs.getString("userId"), rs.getString("name"), rs.getString("email"),
                         rs.getString("encryptedPassword"), rs.getString("studentId"),
                         new HashSet<>(), rs.getInt("version"));
+                student.setTakenCourse(getCoursesByStudentId(student.getStudentID()));
+                return student;
             }
         }
         return null;
@@ -49,13 +55,15 @@ public class StudentService {
 
     public Student findStudentByEmail(String email) throws SQLException {
         String sql = "SELECT * FROM User JOIN Student ON User.userId = Student.userId WHERE User.email = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, email);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return new Student(rs.getString("userId"), rs.getString("name"), rs.getString("email"),
+                var student = new Student(rs.getString("userId"), rs.getString("name"), rs.getString("email"),
                         rs.getString("encryptedPassword"), rs.getString("studentId"),
                         new HashSet<>(), rs.getInt("version"));
+                student.setTakenCourse(getCoursesByStudentId(student.getStudentID()));
+                return student;
             }
         }
         return null;
@@ -63,16 +71,50 @@ public class StudentService {
 
     public Student findStudentByStudentId(String studentId) throws SQLException {
         String sql = "SELECT * FROM User JOIN Student ON User.userId = Student.userId WHERE Student.studentId = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, studentId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return new Student(rs.getString("userId"), rs.getString("name"), rs.getString("email"),
+                var student = new Student(rs.getString("userId"), rs.getString("name"), rs.getString("email"),
                         rs.getString("encryptedPassword"), rs.getString("studentId"),
                         new HashSet<>(), rs.getInt("version"));
+                student.setTakenCourse(getCoursesByStudentId(studentId));
+                return student;
             }
         }
         return null;
+    }
+
+    private Set<Course> getCoursesByStudentId(String studentId) throws SQLException {
+        Set<Course> courses = new HashSet<>();
+        String sql = "SELECT Course.* FROM Course JOIN Student_Course ON Course.courseID = Student_Course.courseId WHERE Student_Course.studentId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, studentId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Course course = new Course(rs.getString("courseID"), rs.getString("courseCode"),
+                        rs.getInt("totalCapacity"), rs.getInt("currentNumber"),
+                        null, null, null, rs.getInt("version"));
+                courses.add(course);
+            }
+        }
+        return courses;
+    }
+
+    public List<Student> findAllStudents() throws SQLException {
+        List<Student> students = new ArrayList<>();
+        String sql = "SELECT * FROM User JOIN Student ON User.userId = Student.userId";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                var student = new Student(rs.getString("userId"), rs.getString("name"), rs.getString("email"),
+                        rs.getString("encryptedPassword"), rs.getString("studentId"),
+                        new HashSet<>(), rs.getInt("version"));
+                student.setTakenCourse(getCoursesByStudentId(student.getStudentID()));
+                students.add(student);
+            }
+        }
+        return students;
     }
 }
 

@@ -41,5 +41,6 @@ public class ConnectionPool {
             conn.close();
         }
         connectionPool.clear();
+        System.out.println("Cleared all connections");
     }
 }

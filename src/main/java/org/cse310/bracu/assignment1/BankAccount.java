@@ -31,6 +31,7 @@ public class BankAccount {
                 TransactionType.DEPOSIT,
                 this.balance);
         listOfTransactions.add(transaction);
+        System.out.println("Current balance is " + balance);
     }
 
     public void withdraw(double amount) throws Exception {
@@ -46,6 +47,7 @@ public class BankAccount {
                 TransactionType.DEPOSIT,
                 this.balance);
         listOfTransactions.add(transaction);
+        System.out.println("Current balance is " + balance);
     }
 
     public void printStatement() {

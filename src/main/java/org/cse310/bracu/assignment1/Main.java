@@ -144,7 +144,7 @@ public class Main {
             return;
         }
         var account = accountDB.get(accountID);
-        System.out.println(account.getBalance());
+        System.out.println("Current account balance " + account.getBalance());
     }
 
     private static void handlePrintDetails() throws IOException {
@@ -165,5 +165,6 @@ public class Main {
         System.out.println("4. Check the balance of an existing account.");
         System.out.println("5. Print a statement of all transactions for a specific account.");
         System.out.println("6. Quit");
+        System.out.print("Please enter what you would like to do: ");
     }
 }

@@ -116,5 +116,41 @@ public class StudentService {
         }
         return students;
     }
+
+    public void updateStudentName(String userId, String newName) throws SQLException {
+        String sql = "UPDATE User SET name = ? WHERE userId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, newName);
+            pstmt.setString(2, userId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void updateStudentEmail(String userId, String newEmail) throws SQLException {
+        String sql = "UPDATE User SET email = ? WHERE userId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, newEmail);
+            pstmt.setString(2, userId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void addCourseToStudent(String studentId, String courseId) throws SQLException {
+        String sql = "INSERT INTO Student_Course (studentId, courseId) VALUES (?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, studentId);
+            pstmt.setString(2, courseId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void removeCourseFromStudent(String studentId, String courseId) throws SQLException {
+        String sql = "DELETE FROM Student_Course WHERE studentId = ? AND courseId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, studentId);
+            pstmt.setString(2, courseId);
+            pstmt.executeUpdate();
+        }
+    }
 }
 

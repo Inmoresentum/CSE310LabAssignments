@@ -13,7 +13,9 @@ public class ConnectionPool {
     private ConnectionPool() throws SQLException {
         connectionPool = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            Connection conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/CSE310DB", "root", "");
+            Connection conn = DriverManager
+                    .getConnection("jdbc:mariadb://localhost:3306/CSE310DB",
+                            "root", "");
             connectionPool.add(conn);
         }
     }

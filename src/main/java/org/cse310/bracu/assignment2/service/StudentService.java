@@ -5,10 +5,7 @@ import org.cse310.bracu.assignment2.entities.Student;
 import org.cse310.bracu.assignment2.entities.UserType;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class StudentService {
     private final Connection connection;
@@ -37,7 +34,7 @@ public class StudentService {
         }
     }
 
-    public Student findStudentById(String userId) throws SQLException {
+    public Optional<Student> findStudentById(String userId) throws SQLException {
         String sql = "SELECT * FROM User JOIN Student ON User.userId = Student.userId WHERE User.userId = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, userId);
@@ -47,13 +44,13 @@ public class StudentService {
                         rs.getString("encryptedPassword"), rs.getString("studentId"),
                         new HashSet<>(), rs.getInt("version"));
                 student.setTakenCourse(getCoursesByStudentId(student.getStudentID()));
-                return student;
+                return Optional.of(student);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
-    public Student findStudentByEmail(String email) throws SQLException {
+    public Optional<Student> findStudentByEmail(String email) throws SQLException {
         String sql = "SELECT * FROM User JOIN Student ON User.userId = Student.userId WHERE User.email = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, email);
@@ -63,13 +60,13 @@ public class StudentService {
                         rs.getString("encryptedPassword"), rs.getString("studentId"),
                         new HashSet<>(), rs.getInt("version"));
                 student.setTakenCourse(getCoursesByStudentId(student.getStudentID()));
-                return student;
+                return Optional.of(student);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
-    public Student findStudentByStudentId(String studentId) throws SQLException {
+    public Optional<Student> findStudentByStudentId(String studentId) throws SQLException {
         String sql = "SELECT * FROM User JOIN Student ON User.userId = Student.userId WHERE Student.studentId = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, studentId);
@@ -79,10 +76,10 @@ public class StudentService {
                         rs.getString("encryptedPassword"), rs.getString("studentId"),
                         new HashSet<>(), rs.getInt("version"));
                 student.setTakenCourse(getCoursesByStudentId(studentId));
-                return student;
+                return Optional.of(student);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     private Set<Course> getCoursesByStudentId(String studentId) throws SQLException {

@@ -84,7 +84,9 @@ public class StudentService {
 
     private Set<Course> getCoursesByStudentId(String studentId) throws SQLException {
         Set<Course> courses = new HashSet<>();
-        String sql = "SELECT Course.* FROM Course JOIN Student_Course ON Course.courseID = Student_Course.courseId WHERE Student_Course.studentId = ?";
+        String sql = "SELECT Course.* FROM Course JOIN Student_Course" +
+                " ON Course.courseID = Student_Course.courseId" +
+                " WHERE Student_Course.studentId = ?";
         try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
             prepareStatement.setString(1, studentId);
             ResultSet rs = prepareStatement.executeQuery();

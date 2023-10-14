@@ -1,4 +1,4 @@
-CREATE TABLE User
+CREATE TABLE CSE310DB.User
 (
     userId            VARCHAR(255) PRIMARY KEY,
     name              VARCHAR(255)        NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE User
     userType          ENUM('STUDENT', 'LECTURER') NOT NULL
 );
 
-CREATE TABLE Student
+CREATE TABLE CSE310DB.Student
 (
     userId    VARCHAR(255) PRIMARY KEY,
     studentId VARCHAR(255) UNIQUE NOT NULL,
@@ -15,14 +15,14 @@ CREATE TABLE Student
     FOREIGN KEY (userId) REFERENCES User (userId)
 );
 
-CREATE TABLE Lecturer
+CREATE TABLE CSE310DB.Lecturer
 (
     userId     VARCHAR(255) PRIMARY KEY,
     lecturerId VARCHAR(255) UNIQUE NOT NULL,
     FOREIGN KEY (userId) REFERENCES User (userId)
 );
 
-CREATE TABLE Course
+CREATE TABLE CSE310DB.Course
 (
     courseID      VARCHAR(255) PRIMARY KEY,
     courseCode    VARCHAR(255) UNIQUE NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE Course
     version       INT
 );
 
-CREATE TABLE Student_Course
+CREATE TABLE CSE310DB.Student_Course
 (
     studentId VARCHAR(255),
     courseId  VARCHAR(255),
@@ -40,7 +40,7 @@ CREATE TABLE Student_Course
     PRIMARY KEY (studentId, courseId)
 );
 
-CREATE TABLE Lecturer_Course
+CREATE TABLE CSE310DB.Lecturer_Course
 (
     lecturerId VARCHAR(255),
     courseId   VARCHAR(255),
@@ -49,7 +49,7 @@ CREATE TABLE Lecturer_Course
     PRIMARY KEY (lecturerId, courseId)
 );
 
-CREATE TABLE Schedule
+CREATE TABLE CSE310DB.Schedule
 (
     scheduleID INT AUTO_INCREMENT PRIMARY KEY,
     day        ENUM('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY') NOT NULL,

@@ -17,7 +17,9 @@ public class Main {
         studentService.addStudent(createdStudent);
         System.out.println("Done creating the student");
         studentService.findAllStudents().forEach(System.out::println);
+        dbConnections.printStatusOfDBConnections();
         dbConnections.closeAllConnections();
         System.out.println("Done");
+        dbConnections.closeAllConnections();
     }
 }

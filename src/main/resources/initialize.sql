@@ -27,7 +27,7 @@ CREATE TABLE CSE310DB.Course
     courseID      VARCHAR(255) PRIMARY KEY,
     courseCode    VARCHAR(255) UNIQUE NOT NULL,
     totalCapacity INT                 NOT NULL,
-    currentNumber INT                 NOT NULL,
+    availableSeat INT                 NOT NULL,
     version       INT
 );
 

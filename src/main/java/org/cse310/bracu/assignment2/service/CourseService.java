@@ -19,7 +19,7 @@ public class CourseService {
             prepareStatement.setString(1, course.getCourseID());
             prepareStatement.setString(2, course.getCourseCode());
             prepareStatement.setInt(3, course.getTotalCapacity());
-            prepareStatement.setInt(4, course.getCurrentNumber());
+            prepareStatement.setInt(4, course.getAvailableSeat());
             prepareStatement.setInt(5, course.getVersion());
             prepareStatement.executeUpdate();
         }
@@ -38,7 +38,7 @@ public class CourseService {
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, course.getCourseCode());
             pstmt.setInt(2, course.getTotalCapacity());
-            pstmt.setInt(3, course.getCurrentNumber());
+            pstmt.setInt(3, course.getAvailableSeat());
             pstmt.setString(4, course.getCourseID());
             pstmt.setInt(5, course.getVersion());
             int affectedRows = pstmt.executeUpdate();
@@ -74,7 +74,7 @@ public class CourseService {
             ResultSet rs = prepareStatement.executeQuery();
             while (rs.next()) {
                 Course course = new Course(rs.getString("courseID"), rs.getString("courseCode"),
-                        rs.getInt("totalCapacity"), rs.getInt("currentNumber"),
+                        rs.getInt("totalCapacity"), rs.getInt("availableSeat"),
                         null, null, null,
                         rs.getInt("version"));
                 courses.add(course);

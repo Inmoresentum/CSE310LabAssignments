@@ -15,7 +15,7 @@ public class Course {
     private String courseID;
     private String courseCode;
     private Integer totalCapacity;
-    private Integer currentNumber;
+    private Integer availableSeat;
     private List<Schedule> schedule;
     private Set<Student> students;
     private Set<Lecturer> lecturers;

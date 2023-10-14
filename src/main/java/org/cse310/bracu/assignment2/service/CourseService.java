@@ -14,7 +14,8 @@ public class CourseService {
     }
 
     public void addCourse(Course course) throws SQLException {
-        String sql = "INSERT INTO Course (courseID, courseCode, totalCapacity, currentNumber, version) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Course (courseID, courseCode, totalCapacity," +
+                " currentNumber, version) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
             prepareStatement.setString(1, course.getCourseID());
             prepareStatement.setString(2, course.getCourseCode());
@@ -34,7 +35,9 @@ public class CourseService {
     }
 
     public void updateCourse(Course course) throws SQLException {
-        String sql = "UPDATE Course SET courseCode = ?, totalCapacity = ?, currentNumber = ?, version = version + 1 WHERE courseID = ? AND version = ?";
+        String sql = "UPDATE Course SET courseCode = ?, totalCapacity = ?," +
+                " currentNumber = ?, version = version + 1" +
+                " WHERE courseID = ? AND version = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, course.getCourseCode());
             pstmt.setInt(2, course.getTotalCapacity());

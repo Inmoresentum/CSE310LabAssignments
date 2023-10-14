@@ -20,5 +20,4 @@ public class Course {
     private Set<Student> students;
     private Set<Lecturer> lecturers;
     private Integer version;
-
 }

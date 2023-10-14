@@ -34,16 +34,20 @@ public class CourseService {
     }
 
     public void updateCourse(Course course) throws SQLException {
-        String sql = "UPDATE Course SET courseCode = ?, totalCapacity = ?, currentNumber = ?, version = ? WHERE courseID = ?";
-        try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
-            prepareStatement.setString(1, course.getCourseCode());
-            prepareStatement.setInt(2, course.getTotalCapacity());
-            prepareStatement.setInt(3, course.getCurrentNumber());
-            prepareStatement.setInt(4, course.getVersion());
-            prepareStatement.setString(5, course.getCourseID());
-            prepareStatement.executeUpdate();
+        String sql = "UPDATE Course SET courseCode = ?, totalCapacity = ?, currentNumber = ?, version = version + 1 WHERE courseID = ? AND version = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, course.getCourseCode());
+            pstmt.setInt(2, course.getTotalCapacity());
+            pstmt.setInt(3, course.getCurrentNumber());
+            pstmt.setString(4, course.getCourseID());
+            pstmt.setInt(5, course.getVersion());
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Update failed, no rows affected. Version mismatch.");
+            }
         }
     }
+
 
     public void addLecturerToCourse(String courseId, String lecturerId) throws SQLException {
         String sql = "INSERT INTO Lecturer_Course (lecturerId, courseId) VALUES (?, ?)";

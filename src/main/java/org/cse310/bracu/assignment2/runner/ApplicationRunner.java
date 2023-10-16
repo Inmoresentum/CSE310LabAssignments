@@ -2,6 +2,7 @@ package org.cse310.bracu.assignment2.runner;
 
 import org.cse310.bracu.assignment2.entities.Course;
 import org.cse310.bracu.assignment2.entities.Schedule;
+import org.cse310.bracu.assignment2.entities.Student;
 import org.cse310.bracu.assignment2.entities.UserType;
 import org.cse310.bracu.assignment2.repository.ConnectionPool;
 import org.cse310.bracu.assignment2.security.Session;
@@ -11,6 +12,7 @@ import org.cse310.bracu.assignment2.service.StudentService;
 
 import java.io.*;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.*;
@@ -97,6 +99,11 @@ public class ApplicationRunner {
 
     @SuppressWarnings("DuplicatedCode")
     private static void handleAuthOperation() throws IOException {
+        if (Session.isSession()) {
+            Session.invalidateSession();
+            pw.println("Log out Successful!!");
+            return;
+        }
         pw.println("Login as: ");
         pw.println("1. Student");
         pw.println("2. Lecturer");
@@ -114,6 +121,7 @@ public class ApplicationRunner {
                     return;
                 }
                 pw.println("Welcome " + Session.getSession().getName());
+                handleCourseRegistrationProcess();
             }
             case "2" -> {
                 pw.println("Please enter your email: ");
@@ -186,10 +194,32 @@ public class ApplicationRunner {
         }
     }
 
-    private static void handleCourseRegistrationProcess() throws SQLException {
-        List<Course> offeredCourses = courseService.findAllCourses();
-        for (int i = 0; i < offeredCourses.size(); i++) {
-            pw.println((i + 1) + " " + offeredCourses.get(i));
+    private static void handleCourseRegistrationProcess() {
+        pw.println("You can register for the below courses ");
+        var curStudent = (Student) Session.getSession();
+        try {
+            List<Course> offeredCourses = courseService.findAllCourses();
+            for (int i = 0; i < offeredCourses.size(); i++) {
+                var curCourse = offeredCourses.get(i);
+                pw.print((i + 1) + " " + curCourse.getCourseCode() + " section " + curCourse.getSection() +
+                        " Total Seat " + curCourse.getTotalCapacity() + " seat remaining" + curCourse.getAvailableSeat() + " ");
+                for (Schedule schedule : curCourse.getSchedule()) {
+                    pw.print(schedule + " ");
+                }
+                pw.println();
+            }
+            pw.print("Which course you would like to register for: ");
+            pw.flush();
+            var courseIndex = Integer.parseInt(readLineAndTokenize().nextToken());
+            var courseID = offeredCourses.get(courseIndex - 1).getCourseID();
+            try {
+                studentService.addCourseToStudent(curStudent.getStudentID(), courseID);
+            } catch (SQLIntegrityConstraintViolationException e) {
+                pw.println("You have already taken this course....");
+            }
+            pw.println("Done... The have been added");
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

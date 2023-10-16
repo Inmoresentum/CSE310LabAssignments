@@ -9,12 +9,10 @@ import org.cse310.bracu.assignment2.entities.UserType;
 public class Session {
     private static Session session;
     private final User user;
-    private final UserType userType;
 
 
-    private Session(User user, UserType userType) {
+    private Session(User user) {
         this.user = user;
-        this.userType = userType;
     }
 
     public static Session getSession() {
@@ -25,7 +23,10 @@ public class Session {
         session = null;
     }
 
-    public static void setSession(User user, UserType userType) {
-        session = new Session(user, userType);
+    public static void setSession(User user) {
+        session = new Session(user);
+    }
+    public static boolean isSession() {
+        return session != null;
     }
 }

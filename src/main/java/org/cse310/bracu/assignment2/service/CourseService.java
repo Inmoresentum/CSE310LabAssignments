@@ -1,10 +1,17 @@
 package org.cse310.bracu.assignment2.service;
 
 import org.cse310.bracu.assignment2.entities.Course;
+import org.cse310.bracu.assignment2.entities.Lecturer;
+import org.cse310.bracu.assignment2.entities.Schedule;
+import org.cse310.bracu.assignment2.entities.Student;
+import org.cse310.bracu.assignment2.exceptions.OptimisticLockException;
 
 import java.sql.*;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CourseService {
     private final Connection connection;
@@ -15,13 +22,32 @@ public class CourseService {
 
     public void addCourse(Course course) throws SQLException {
         String sql = "INSERT INTO Course (courseID, courseCode, totalCapacity," +
-                " currentNumber, version) VALUES (?, ?, ?, ?, ?)";
+                " availableSeat, version) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
             prepareStatement.setString(1, course.getCourseID());
             prepareStatement.setString(2, course.getCourseCode());
             prepareStatement.setInt(3, course.getTotalCapacity());
             prepareStatement.setInt(4, course.getAvailableSeat());
-            prepareStatement.setInt(5, course.getVersion());
+            prepareStatement.setInt(5, 1);
+            prepareStatement.executeUpdate();
+        }
+        course.getSchedule().forEach((schedule)-> {
+            try {
+                addScheduleToCourse(course.getCourseID(), schedule);
+            } catch (SQLException e) {
+                throw new RuntimeException("I am lazy and I don't want to implement transaction xD");
+            }
+        });
+    }
+
+    public void addScheduleToCourse(String courseId, Schedule schedule) throws SQLException {
+        String sql = "INSERT INTO Schedule (day, startTime, endTime, version, courseId) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
+            prepareStatement.setString(1, schedule.getDay().name());
+            prepareStatement.setTime(2, Time.valueOf(schedule.getStartTime()));
+            prepareStatement.setTime(3, Time.valueOf(schedule.getEndTime()));
+            prepareStatement.setInt(4, schedule.getVersion());
+            prepareStatement.setString(5, courseId);
             prepareStatement.executeUpdate();
         }
     }
@@ -38,15 +64,15 @@ public class CourseService {
         String sql = "UPDATE Course SET courseCode = ?, totalCapacity = ?," +
                 " currentNumber = ?, version = version + 1" +
                 " WHERE courseID = ? AND version = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, course.getCourseCode());
-            pstmt.setInt(2, course.getTotalCapacity());
-            pstmt.setInt(3, course.getAvailableSeat());
-            pstmt.setString(4, course.getCourseID());
-            pstmt.setInt(5, course.getVersion());
-            int affectedRows = pstmt.executeUpdate();
+        try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
+            prepareStatement.setString(1, course.getCourseCode());
+            prepareStatement.setInt(2, course.getTotalCapacity());
+            prepareStatement.setInt(3, course.getAvailableSeat());
+            prepareStatement.setString(4, course.getCourseID());
+            prepareStatement.setInt(5, course.getVersion());
+            int affectedRows = prepareStatement.executeUpdate();
             if (affectedRows == 0) {
-                throw new SQLException("Update failed, no rows affected. Version mismatch.");
+                throw new OptimisticLockException("Update failed, no rows affected. Version mismatch.");
             }
         }
     }
@@ -76,13 +102,78 @@ public class CourseService {
         try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
             ResultSet rs = prepareStatement.executeQuery();
             while (rs.next()) {
-                Course course = new Course(rs.getString("courseID"), rs.getString("courseCode"),
-                        rs.getInt("totalCapacity"), rs.getInt("availableSeat"),
-                        null, null, null,
+                Course course = new Course(rs.getString("courseID"),
+                        rs.getString("courseCode"),
+                        rs.getInt("totalCapacity"),
+                        rs.getInt("availableSeat"),
+                        getSchedulesByCourseId(rs.getString("courseID")),
+                        getStudentsByCourseId(rs.getString("courseID")),
+                        getLecturersByCourseId(rs.getString("courseID")),
                         rs.getInt("version"));
                 courses.add(course);
             }
         }
         return courses;
+    }
+
+    private List<Schedule> getSchedulesByCourseId(String courseId) throws SQLException {
+        List<Schedule> schedules = new ArrayList<>();
+        String sql = "SELECT * FROM Schedule WHERE courseId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, courseId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Schedule schedule = new Schedule(DayOfWeek.valueOf(rs.getString("day")),
+                        rs.getTime("startTime").toLocalTime(),
+                        rs.getTime("endTime").toLocalTime(),
+                        rs.getInt("version"));
+                schedules.add(schedule);
+            }
+        }
+        return schedules;
+    }
+
+    private Set<Student> getStudentsByCourseId(String courseId) throws SQLException {
+        Set<Student> students = new HashSet<>();
+        String sql = "SELECT User.*, Student.studentId FROM User" +
+                " JOIN Student ON User.userId = Student.userId" +
+                " JOIN Student_Course ON Student.userId = Student_Course.studentId" +
+                " WHERE Student_Course.courseId = ?";
+        try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
+            prepareStatement.setString(1, courseId);
+            ResultSet queryResult = prepareStatement.executeQuery();
+            while (queryResult.next()) {
+                Student student = new Student(queryResult.getString("userId"),
+                        queryResult.getString("name"),
+                        queryResult.getString("email"),
+                        queryResult.getString("encryptedPassword"),
+                        queryResult.getString("studentId"),
+                        new HashSet<>(), queryResult.getInt("version"));
+                students.add(student);
+            }
+        }
+        return students;
+    }
+
+    private Set<Lecturer> getLecturersByCourseId(String courseId) throws SQLException {
+        Set<Lecturer> lecturers = new HashSet<>();
+        String sql = "SELECT User.*, Lecturer.lecturerId FROM User" +
+                " JOIN Lecturer ON User.userId = Lecturer.userId" +
+                " JOIN Lecturer_Course ON Lecturer.userId = Lecturer_Course.lecturerId" +
+                " WHERE Lecturer_Course.courseId = ?";
+        try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
+            prepareStatement.setString(1, courseId);
+            ResultSet queryResult = prepareStatement.executeQuery();
+            while (queryResult.next()) {
+                Lecturer lecturer = new Lecturer(queryResult.getString("userId"),
+                        queryResult.getString("name"),
+                        queryResult.getString("email"),
+                        queryResult.getString("encryptedPassword"),
+                        queryResult.getString("lecturerId"),
+                        new HashSet<>());
+                lecturers.add(lecturer);
+            }
+        }
+        return lecturers;
     }
 }

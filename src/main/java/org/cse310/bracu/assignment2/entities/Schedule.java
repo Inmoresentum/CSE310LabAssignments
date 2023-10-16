@@ -19,11 +19,8 @@ public class Schedule {
     @Override
     public String toString() {
         final var formatter = DateTimeFormatter.ofPattern("hh:mm a");
-        return "Schedule{" +
-                "day=" + day +
-                ", startTime=" + startTime.format(formatter) +
-                ", endTime=" + endTime.format(formatter) +
-                ", version=" + version +
-                '}';
+        return "Day: " + day +
+                ", startTime: " + startTime.format(formatter) +
+                ", endTime: " + endTime.format(formatter);
     }
 }

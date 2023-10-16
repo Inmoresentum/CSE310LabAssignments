@@ -48,8 +48,8 @@ public class ConnectionPool {
     }
 
     public synchronized void closeAllConnections() throws SQLException {
-        for (Connection conn : connectionPool) {
-            conn.close();
+        for (Connection connection : connectionPool) {
+            connection.close();
         }
         connectionPool.clear();
         System.out.println("Cleared all connections");

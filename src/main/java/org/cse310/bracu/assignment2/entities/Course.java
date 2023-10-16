@@ -9,7 +9,6 @@ import java.util.Set;
 @Setter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @ToString
 public class Course {
     private String courseID;

@@ -15,8 +15,8 @@ public class Session {
         this.user = user;
     }
 
-    public static Session getSession() {
-        return session;
+    public static User getSession() {
+        return session.user;
     }
 
     public static void invalidateSession() {

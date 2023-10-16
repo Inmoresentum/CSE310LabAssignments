@@ -13,16 +13,20 @@ import java.util.*;
 public class StudentService {
     private final Connection connection;
     private static StudentService studentService;
-    private StudentService(Connection connection) {
+    private final CourseService courseService;
+
+    private StudentService(Connection connection) throws SQLException {
         this.connection = connection;
+        this.courseService = CourseService.getInstance();
     }
 
     public static StudentService getInstance() throws SQLException {
         if (studentService == null) {
             studentService = new StudentService(ConnectionPool.getInstance().getConnection());
         }
-            return studentService;
+        return studentService;
     }
+
     public boolean authenticate(String email, String password) {
         Optional<Student> maybeStudent;
         try {
@@ -219,22 +223,43 @@ public class StudentService {
         }
     }
 
-    public void addCourseToStudent(String studentId, String courseId) throws SQLException {
-        String savePointSql = "SAVEPOINT COURSE_REG_SAVE_POINT";
-        try (var preparedStatement = connection.prepareStatement(savePointSql)) {
-            preparedStatement.executeUpdate();
+    public void addCourseToStudent(String studentId, Course course) throws SQLException {
+        if (!isSeatAvailable(course)) {
+            System.out.println("There is no seat available for this section.");
+            System.out.println("Consider taking another one");
+            return;
         }
-        String sql = "INSERT INTO Student_Course (studentId, courseId) VALUES (?, ?)";
-        try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
-            prepareStatement.setString(1, studentId);
-            prepareStatement.setString(2, courseId);
-            prepareStatement.executeUpdate();
-        } catch (Exception e) {
-            String rollbackSql = "ROLLBACK TO COURSE_REG_SAVE_POINT";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(rollbackSql)) {
-                preparedStatement.executeUpdate();
+        Savepoint savepoint = null;
+        course.setAvailableSeat(course.getAvailableSeat() - 1);
+        try {
+            savepoint = connection.setSavepoint("COURSE_REG_SAVE_POINT");
+            String sql = "INSERT INTO Student_Course (studentId, courseId) VALUES (?, ?)";
+            try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
+                prepareStatement.setString(1, studentId);
+                prepareStatement.setString(2, course.getCourseID());
+                System.out.println(course);
+                System.out.println(studentId);
+                System.out.println("Before this thing");
+                System.out.println(prepareStatement);
+                prepareStatement.execute();
+                System.out.println("After this thing");
+                courseService.updateCourse(course);
+            }
+        } catch (SQLException e) {
+            System.out.println("An error occurred: " + e.getMessage());
+            e.printStackTrace();
+            if (savepoint != null) {
+                connection.rollback(savepoint);
+            }
+        } finally {
+            if (savepoint != null) {
+                connection.releaseSavepoint(savepoint);
             }
         }
+    }
+
+    private boolean isSeatAvailable(Course course) {
+        return course.getAvailableSeat() > 0;
     }
 
     public void removeCourseFromStudent(String studentId, String courseId) throws SQLException {

@@ -9,10 +9,7 @@ import org.cse310.bracu.assignment2.repository.ConnectionPool;
 
 import java.sql.*;
 import java.time.DayOfWeek;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CourseService {
     private final Connection connection;
@@ -21,12 +18,14 @@ public class CourseService {
     private CourseService(Connection connection) {
         this.connection = connection;
     }
+
     public static CourseService getInstance() throws SQLException {
         if (courseService == null) {
             courseService = new CourseService(ConnectionPool.getInstance().getConnection());
         }
         return courseService;
     }
+
     public void addCourse(Course course) throws SQLException {
         String sql = "INSERT INTO Course (courseID, courseCode, section, totalCapacity," +
                 " availableSeat, version) VALUES (?, ?, ?, ?, ?, ?)";
@@ -39,7 +38,7 @@ public class CourseService {
             prepareStatement.setInt(6, 1);
             prepareStatement.executeUpdate();
         }
-        course.getSchedule().forEach((schedule)-> {
+        course.getSchedule().forEach((schedule) -> {
             try {
                 addScheduleToCourse(course.getCourseID(), schedule);
             } catch (SQLException e) {
@@ -69,6 +68,13 @@ public class CourseService {
     }
 
     public void updateCourse(Course course) throws SQLException {
+        if (!isSeatAvailable(course)) {
+            System.out.println("There is no seat available for this section.");
+            System.out.println("Consider taking another one");
+            return;
+        }
+        System.out.println("Before updating");
+        System.out.println(course);
         String sql = "UPDATE Course SET courseCode = ?, totalCapacity = ?," +
                 " availableSeat = ?, version = version + 1" +
                 " WHERE courseID = ? AND version = ?";
@@ -80,11 +86,16 @@ public class CourseService {
             prepareStatement.setInt(5, course.getVersion());
             int affectedRows = prepareStatement.executeUpdate();
             if (affectedRows == 0) {
-                throw new OptimisticLockException("Update failed, no rows affected. Version mismatch.");
+                System.out.println("Someone else was quick than I was. Trying again...");
+                course = findCourseByCourseID(course.getCourseID()).orElseThrow();
+                updateCourse(course);
             }
         }
     }
 
+    private boolean isSeatAvailable(Course course) {
+        return course.getAvailableSeat() > 0;
+    }
 
     public void addLecturerToCourse(String courseId, String lecturerId) throws SQLException {
         String sql = "INSERT INTO Lecturer_Course (lecturerId, courseId) VALUES (?, ?)";
@@ -123,6 +134,27 @@ public class CourseService {
             }
         }
         return courses;
+    }
+
+    public Optional<Course> findCourseByCourseID(String courseId) throws SQLException {
+        String sql = "SELECT * FROM Course where courseID = ?";
+        try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
+            prepareStatement.setString(1, courseId);
+            ResultSet rs = prepareStatement.executeQuery();
+            if (rs.next()) {
+                Course course = new Course(rs.getString("courseID"),
+                        rs.getString("courseCode"),
+                        rs.getString("section"),
+                        rs.getInt("totalCapacity"),
+                        rs.getInt("availableSeat"),
+                        getSchedulesByCourseId(rs.getString("courseID")),
+                        getStudentsByCourseId(rs.getString("courseID")),
+                        getLecturersByCourseId(rs.getString("courseID")),
+                        rs.getInt("version"));
+                return Optional.of(course);
+            }
+            return Optional.empty();
+        }
     }
 
     private List<Schedule> getSchedulesByCourseId(String courseId) throws SQLException {

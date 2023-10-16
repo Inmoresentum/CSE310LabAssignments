@@ -57,6 +57,9 @@ public class ApplicationRunner {
         cse310Section2.setSchedule(scheduleList);
         courseService.addCourse(cse310Section1);
         courseService.addCourse(cse310Section2);
+
+        Student student = new Student(UUID.randomUUID().toString(), "whatever", "whatever@whatever.com", "admin", "20101396",new HashSet<>(), 1);
+        studentService.register(student.getName(), student.getStudentID(), student.getEmail(), student.getEncryptedPassword());
         try {
             takeInputAndStartExecution();
             br.close();
@@ -209,9 +212,9 @@ public class ApplicationRunner {
             pw.print("Which course you would like to register for: ");
             pw.flush();
             var courseIndex = Integer.parseInt(readLineAndTokenize().nextToken());
-            var courseID = offeredCourses.get(courseIndex - 1).getCourseID();
+            var courCourse = offeredCourses.get(courseIndex - 1);
             try {
-                studentService.addCourseToStudent(curStudent.getStudentID(), courseID);
+                studentService.addCourseToStudent(curStudent.getUserId(), courCourse);
             } catch (SQLIntegrityConstraintViolationException e) {
                 pw.println("You have already taken this course....");
             }

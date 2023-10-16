@@ -3,6 +3,7 @@ package org.cse310.bracu.assignment2.service;
 import org.cse310.bracu.assignment2.entities.Course;
 import org.cse310.bracu.assignment2.entities.Student;
 import org.cse310.bracu.assignment2.entities.UserType;
+import org.cse310.bracu.assignment2.repository.ConnectionPool;
 import org.cse310.bracu.assignment2.security.Session;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -11,11 +12,17 @@ import java.util.*;
 
 public class StudentService {
     private final Connection connection;
-
-    public StudentService(Connection connection) {
+    private static StudentService studentService;
+    private StudentService(Connection connection) {
         this.connection = connection;
     }
 
+    public static StudentService getInstance() throws SQLException {
+        if (studentService == null) {
+            studentService = new StudentService(ConnectionPool.getInstance().getConnection());
+        }
+            return studentService;
+    }
     public boolean authenticate(String email, String password) {
         Optional<Student> maybeStudent;
         try {
@@ -213,11 +220,20 @@ public class StudentService {
     }
 
     public void addCourseToStudent(String studentId, String courseId) throws SQLException {
+        String savePointSql = "SAVEPOINT COURSE_REG_SAVE_POINT";
+        try (var preparedStatement = connection.prepareStatement(savePointSql)) {
+            preparedStatement.executeUpdate();
+        }
         String sql = "INSERT INTO Student_Course (studentId, courseId) VALUES (?, ?)";
         try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
             prepareStatement.setString(1, studentId);
             prepareStatement.setString(2, courseId);
             prepareStatement.executeUpdate();
+        } catch (Exception e) {
+            String rollbackSql = "ROLLBACK TO COURSE_REG_SAVE_POINT";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(rollbackSql)) {
+                preparedStatement.executeUpdate();
+            }
         }
     }
 

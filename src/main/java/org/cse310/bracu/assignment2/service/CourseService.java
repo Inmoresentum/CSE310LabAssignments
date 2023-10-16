@@ -5,6 +5,7 @@ import org.cse310.bracu.assignment2.entities.Lecturer;
 import org.cse310.bracu.assignment2.entities.Schedule;
 import org.cse310.bracu.assignment2.entities.Student;
 import org.cse310.bracu.assignment2.exceptions.OptimisticLockException;
+import org.cse310.bracu.assignment2.repository.ConnectionPool;
 
 import java.sql.*;
 import java.time.DayOfWeek;
@@ -15,11 +16,17 @@ import java.util.Set;
 
 public class CourseService {
     private final Connection connection;
+    private static CourseService courseService;
 
-    public CourseService(Connection connection) {
+    private CourseService(Connection connection) {
         this.connection = connection;
     }
-
+    public static CourseService getInstance() throws SQLException {
+        if (courseService == null) {
+            courseService = new CourseService(ConnectionPool.getInstance().getConnection());
+        }
+        return courseService;
+    }
     public void addCourse(Course course) throws SQLException {
         String sql = "INSERT INTO Course (courseID, courseCode, section, totalCapacity," +
                 " availableSeat, version) VALUES (?, ?, ?, ?, ?, ?)";

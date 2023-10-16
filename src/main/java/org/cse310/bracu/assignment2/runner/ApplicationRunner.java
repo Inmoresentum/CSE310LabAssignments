@@ -29,36 +29,34 @@ public class ApplicationRunner {
 
     public static void run() throws SQLException {
         var dbConnections = ConnectionPool.getInstance();
-        if (studentService == null && lecturerService == null) {
-            studentService = new StudentService(dbConnections.getConnection());
-            lecturerService = new LecturerService(dbConnections.getConnection());
-            courseService = new CourseService(dbConnections.getConnection());
-            var cse310Section1 = new Course(UUID.randomUUID().toString(),
-                    "CSE310",
-                    "1",
-                    11,
-                    11,
-                    new ArrayList<>(),
-                    new HashSet<>(),
-                    new HashSet<>(),
-                    1);
-            var cse310Section2 = new Course(UUID.randomUUID().toString(),
-                    "CSE310",
-                    "2",
-                    9,
-                    9,
-                    new ArrayList<>(),
-                    new HashSet<>(),
-                    new HashSet<>(),
-                    1);
-            var firstSchedule = new Schedule(DayOfWeek.SUNDAY, LocalTime.of(12, 30), LocalTime.of(13, 50), 1);
-            var secondSchedule = new Schedule(DayOfWeek.TUESDAY, LocalTime.of(12, 30), LocalTime.of(13, 50), 1);
-            var scheduleList = List.of(firstSchedule, secondSchedule);
-            cse310Section1.setSchedule(scheduleList);
-            cse310Section2.setSchedule(scheduleList);
-            courseService.addCourse(cse310Section1);
-            courseService.addCourse(cse310Section2);
-        }
+        studentService = StudentService.getInstance();
+        lecturerService = LecturerService.getInstance();
+        courseService = CourseService.getInstance();
+        var cse310Section1 = new Course(UUID.randomUUID().toString(),
+                "CSE310",
+                "1",
+                11,
+                11,
+                new ArrayList<>(),
+                new HashSet<>(),
+                new HashSet<>(),
+                1);
+        var cse310Section2 = new Course(UUID.randomUUID().toString(),
+                "CSE310",
+                "2",
+                9,
+                9,
+                new ArrayList<>(),
+                new HashSet<>(),
+                new HashSet<>(),
+                1);
+        var firstSchedule = new Schedule(DayOfWeek.SUNDAY, LocalTime.of(12, 30), LocalTime.of(13, 50), 1);
+        var secondSchedule = new Schedule(DayOfWeek.TUESDAY, LocalTime.of(12, 30), LocalTime.of(13, 50), 1);
+        var scheduleList = List.of(firstSchedule, secondSchedule);
+        cse310Section1.setSchedule(scheduleList);
+        cse310Section2.setSchedule(scheduleList);
+        courseService.addCourse(cse310Section1);
+        courseService.addCourse(cse310Section2);
         try {
             takeInputAndStartExecution();
             br.close();

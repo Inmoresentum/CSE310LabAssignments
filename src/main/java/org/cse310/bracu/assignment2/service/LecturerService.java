@@ -2,6 +2,7 @@ package org.cse310.bracu.assignment2.service;
 
 import org.cse310.bracu.assignment2.entities.Lecturer;
 import org.cse310.bracu.assignment2.entities.UserType;
+import org.cse310.bracu.assignment2.repository.ConnectionPool;
 import org.cse310.bracu.assignment2.security.Session;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -16,11 +17,18 @@ import java.util.UUID;
 public class LecturerService {
 
     private final Connection connection;
-
-    public LecturerService(Connection connection) {
+    private static LecturerService lecturerService;
+    private LecturerService(Connection connection) {
         this.connection = connection;
     }
 
+    public static LecturerService getInstance() throws SQLException {
+        if (lecturerService == null) {
+            lecturerService = new LecturerService(ConnectionPool
+                    .getInstance().getConnection());
+        }
+        return lecturerService;
+    }
     public boolean authenticate(String email, String password) {
         Optional<Lecturer> mayBeLecturer;
         try {

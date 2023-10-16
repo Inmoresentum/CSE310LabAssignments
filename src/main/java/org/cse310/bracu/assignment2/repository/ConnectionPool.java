@@ -23,8 +23,8 @@ public class ConnectionPool {
 
     private void initializeDB() throws SQLException {
         connectionPool.add(DriverManager
-                        .getConnection("jdbc:mariadb://localhost:3306/CSE310DB",
-                                "root", ""));
+                .getConnection("jdbc:mariadb://localhost:3306/CSE310DB",
+                        "root", ""));
         executeStartupScripts();
         closeAllConnections();
     }
@@ -101,10 +101,12 @@ public class ConnectionPool {
                 "CREATE TABLE CSE310DB.Course" +
                         "(" +
                         "courseID      VARCHAR(255) PRIMARY KEY," +
-                        "courseCode    VARCHAR(255) UNIQUE NOT NULL," +
-                        "totalCapacity INT                 NOT NULL," +
-                        "availableSeat INT                 NOT NULL," +
-                        "version       INT" +
+                        "courseCode    VARCHAR(255) NOT NULL," +
+                        "section       VARCHAR(255) NOT NULL," +
+                        "totalCapacity INT          NOT NULL," +
+                        "availableSeat INT          NOT NULL," +
+                        "version       INT," +
+                        "UNIQUE (courseCode, section)" +
                         ");",
 
                 "CREATE TABLE CSE310DB.Student_Course" +

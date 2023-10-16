@@ -25,10 +25,12 @@ CREATE TABLE CSE310DB.Lecturer
 CREATE TABLE CSE310DB.Course
 (
     courseID      VARCHAR(255) PRIMARY KEY,
-    courseCode    VARCHAR(255) UNIQUE NOT NULL,
-    totalCapacity INT                 NOT NULL,
-    availableSeat INT                 NOT NULL,
-    version       INT
+    courseCode    VARCHAR(255) NOT NULL,
+    section       VARCHAR(255) NOT NULL,
+    totalCapacity INT          NOT NULL,
+    availableSeat INT          NOT NULL,
+    version       INT,
+    UNIQUE (courseCode, section)
 );
 
 CREATE TABLE CSE310DB.Student_Course

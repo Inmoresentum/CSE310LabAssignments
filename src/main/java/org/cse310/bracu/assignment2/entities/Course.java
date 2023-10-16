@@ -14,6 +14,7 @@ import java.util.Set;
 public class Course {
     private String courseID;
     private String courseCode;
+    private String section;
     private Integer totalCapacity;
     private Integer availableSeat;
     private List<Schedule> schedule;

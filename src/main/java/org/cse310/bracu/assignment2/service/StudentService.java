@@ -92,6 +92,7 @@ public class StudentService {
             ResultSet rs = prepareStatement.executeQuery();
             while (rs.next()) {
                 Course course = new Course(rs.getString("courseID"), rs.getString("courseCode"),
+                        rs.getString("section"),
                         rs.getInt("totalCapacity"), rs.getInt("availableSeat"),
                         null, null, null, rs.getInt("version"));
                 courses.add(course);

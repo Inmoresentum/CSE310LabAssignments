@@ -21,14 +21,15 @@ public class CourseService {
     }
 
     public void addCourse(Course course) throws SQLException {
-        String sql = "INSERT INTO Course (courseID, courseCode, totalCapacity," +
-                " availableSeat, version) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Course (courseID, courseCode, section, totalCapacity," +
+                " availableSeat, version) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
             prepareStatement.setString(1, course.getCourseID());
             prepareStatement.setString(2, course.getCourseCode());
-            prepareStatement.setInt(3, course.getTotalCapacity());
-            prepareStatement.setInt(4, course.getAvailableSeat());
-            prepareStatement.setInt(5, 1);
+            prepareStatement.setString(3, course.getSection());
+            prepareStatement.setInt(4, course.getTotalCapacity());
+            prepareStatement.setInt(5, course.getAvailableSeat());
+            prepareStatement.setInt(6, 1);
             prepareStatement.executeUpdate();
         }
         course.getSchedule().forEach((schedule)-> {
@@ -62,7 +63,7 @@ public class CourseService {
 
     public void updateCourse(Course course) throws SQLException {
         String sql = "UPDATE Course SET courseCode = ?, totalCapacity = ?," +
-                " currentNumber = ?, version = version + 1" +
+                " availableSeat = ?, version = version + 1" +
                 " WHERE courseID = ? AND version = ?";
         try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
             prepareStatement.setString(1, course.getCourseCode());
@@ -104,6 +105,7 @@ public class CourseService {
             while (rs.next()) {
                 Course course = new Course(rs.getString("courseID"),
                         rs.getString("courseCode"),
+                        rs.getString("section"),
                         rs.getInt("totalCapacity"),
                         rs.getInt("availableSeat"),
                         getSchedulesByCourseId(rs.getString("courseID")),

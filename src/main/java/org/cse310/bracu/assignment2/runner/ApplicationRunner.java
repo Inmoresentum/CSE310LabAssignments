@@ -87,13 +87,7 @@ public class ApplicationRunner {
                 handleAuthOperation();
             } else if (curInput.equals("2")) {
                 handleRegistration();
-            } else if (Session.isSession() &&
-                    Session.getSession().getUserType().equals(UserType.LECTURER) &&
-                    curInput.equals("3")) {
-                handlePrintingRegisteredStudentByCourseAndSection();
-            } else if (Session.isSession() &&
-                    Session.getSession().getUserType().equals(UserType.STUDENT) &&
-                    curInput.equals("3") || !Session.isSession() && curInput.equals("3")) {
+            } else if (curInput.equals("3")) {
                 handlePrintingAllCoursesAndSeatStatus();
             } else if (curInput.equals("4")) {
                 handleLogoutOperation();
@@ -151,12 +145,19 @@ public class ApplicationRunner {
             registerUnAuthenticatedUser();
         else if (Session.getSession().getUserType().equals(UserType.STUDENT)) {
             handleCourseRegistrationProcess();
-        } else handleCourseCreationProcess();
+        } else handlePrintingRegisteredStudentByCourseAndSection();
+
     }
 
-    private static void handleCourseCreationProcess() {
-        pw.println();
-    }
+//    private static void handleCourseCreationProcess() throws IOException {
+//        pw.println("Please enter the Course Code ");
+//        var courseCode = readLineAndTokenize().nextToken();
+//        pw.println("Please enter the section ");
+//        var section = Integer.parseInt(readLineAndTokenize().nextToken());
+//        pw.println("Please enter the total seat capacity ");
+//        var totalSeatCapacity = Integer.parseInt(readLineAndTokenize().nextToken());
+//        pw.println("Now carefully choose the schedule for this course");
+//    }
 
     private static void registerUnAuthenticatedUser() throws IOException {
         pw.println("Register as: ");
@@ -327,8 +328,8 @@ public class ApplicationRunner {
 
     private static void promptForLecturer() {
         pw.println("1. Logout.");
-        pw.println("2. Add courses");
-        pw.println("3. Get the List of Registered Students by Course and Sections.");
+        pw.println("2. Get the List of Registered Students by Course and Sections.");
+        pw.println("3. See all available courses and their seat status.");
         pw.println("4. Exit.");
     }
 

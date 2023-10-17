@@ -1,14 +1,9 @@
 package org.cse310.bracu.assignment2.runner;
 
-import org.cse310.bracu.assignment2.entities.Course;
-import org.cse310.bracu.assignment2.entities.Schedule;
-import org.cse310.bracu.assignment2.entities.Student;
-import org.cse310.bracu.assignment2.entities.UserType;
+import org.cse310.bracu.assignment2.entities.*;
 import org.cse310.bracu.assignment2.repository.ConnectionPool;
 import org.cse310.bracu.assignment2.security.Session;
-import org.cse310.bracu.assignment2.service.CourseService;
-import org.cse310.bracu.assignment2.service.LecturerService;
-import org.cse310.bracu.assignment2.service.StudentService;
+import org.cse310.bracu.assignment2.service.*;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -58,7 +53,7 @@ public class ApplicationRunner {
         courseService.addCourse(cse310Section1);
         courseService.addCourse(cse310Section2);
 
-        Student student = new Student(UUID.randomUUID().toString(), "whatever", "whatever@whatever.com", "admin", "20101396",new HashSet<>(), 1);
+        Student student = new Student(UUID.randomUUID().toString(), "whatever", "whatever@whatever.com", "admin", "20101396", new HashSet<>(), 1);
         studentService.register(student.getName(), student.getStudentID(), student.getEmail(), student.getEncryptedPassword());
         try {
             takeInputAndStartExecution();
@@ -78,17 +73,10 @@ public class ApplicationRunner {
                 handleAuthOperation();
             } else if (curInput.equals("2")) {
                 handleRegistration();
-            } else if (curInput.equals("3")) {
-                handlePrintingAllCoursesAndSeatStatus();
             } else if (Session.isSession() &&
                     Session.getSession().getUserType().equals(UserType.LECTURER) &&
-                    curInput.equals("4")) {
+                    curInput.equals("3")) {
                 handlePrintingRegisteredStudentByCourseAndSection();
-            } else if (Session.isSession() &&
-                    Session.getSession().getUserType().equals(UserType.LECTURER) &&
-                    curInput.equals("5")) {
-                handleLogoutOperation();
-                break;
             } else if (curInput.equals("4")) {
                 handleLogoutOperation();
                 break;
@@ -141,11 +129,23 @@ public class ApplicationRunner {
     }
 
     private static void handleRegistration() throws IOException {
-        if (Session.isSession()) {
-            pw.println("You are already logged in as " + Session.getSession().getName());
-            pw.println("If you need to register another account, please logout and try again.");
-            return;
-        }
+//        if (Session.isSession()) {
+//            pw.println("You are already logged in as " + Session.getSession().getName());
+//            pw.println("If you need to register another account, please logout and try again.");
+//            return;
+//        }
+        if (!Session.isSession())
+            registerUnAuthenticatedUser();
+        else if (Session.getSession().getUserType().equals(UserType.STUDENT)) {
+            handleCourseRegistrationProcess();
+        } else handleCourseCreationProcess();
+    }
+
+    private static void handleCourseCreationProcess() {
+        System.out.println("Creating some interesting course");
+    }
+
+    private static void registerUnAuthenticatedUser() throws IOException {
         pw.println("Register as: ");
         pw.println("1. Student");
         pw.println("2. Lecturer");
@@ -209,9 +209,11 @@ public class ApplicationRunner {
                 }
                 pw.println();
             }
+            pw.println((offeredCourses.size() + 1) + " Do nothing");
             pw.print("Which course you would like to register for: ");
             pw.flush();
             var courseIndex = Integer.parseInt(readLineAndTokenize().nextToken());
+            if (courseIndex == offeredCourses.size() + 1) return;
             var courCourse = offeredCourses.get(courseIndex - 1);
             try {
                 studentService.addCourseToStudent(curStudent.getUserId(), courCourse);
@@ -251,21 +253,53 @@ public class ApplicationRunner {
             throw new IllegalStateException("Must need to be a" +
                     " Lecturer to perform this operations.");
         }
+
+        List<Course> offeredCourses = null;
+        try {
+            offeredCourses = courseService.findAllCourses();
+        } catch (SQLException e) {
+            System.out.println(e);
+            System.out.println("server seems to unavailable right now");
+        }
+        for (int i = 0; i < Objects.requireNonNull(offeredCourses).size(); i++) {
+            var curCourse = offeredCourses.get(i);
+            pw.print((i + 1) + " " + curCourse.getCourseCode() + " section " + curCourse.getSection() +
+                    " Total Seat " + curCourse.getTotalCapacity() + " seat remaining" + curCourse.getAvailableSeat() + " ");
+            for (Schedule schedule : curCourse.getSchedule()) {
+                pw.print(schedule + " ");
+            }
+            pw.println();
+        }
     }
 
     private static void promptUser() {
         pw.println("Please select one of the below operations: ");
-        if (Session.isSession())
-            pw.println("1. Logout.");
-        else pw.println("1. Login.");
-        pw.println("2. Register.");
+        if (!Session.isSession()) {
+            promptForUnAuthenticatedUser();
+        } else if (Session.getSession().getUserType().equals(UserType.LECTURER)) {
+            promptForLecturer();
+        } else promptForStudent();
+    }
+
+    private static void promptForUnAuthenticatedUser() {
+        pw.println("1. Login.");
+        pw.println("2. Register Account");
         pw.println("3. See all available courses and their seat status.");
-        if (Session.isSession() &&
-                Session.getSession().getUserType().equals(UserType.LECTURER)) {
-            pw.println("4. Get the List of Registered Students by Course and Sections.");
-            pw.println("5. Exit.");
-        } else
-            pw.println("4. Exit.");
+        pw.println("4. Exit.");
+    }
+
+    private static void promptForStudent() {
+        pw.println("1. Logout.");
+        pw.println("2. Register Courses");
+        pw.println("3. See all available courses and their seat status.");
+        pw.println("4. Exit.");
+    }
+
+    private static void promptForLecturer() {
+        pw.println("1. Logout.");
+        pw.println("2. Add courses");
+        pw.println("3. Get the List of Registered Students by Course and Sections.");
+        pw.println("4. Exit.");
     }
 
     private static StringTokenizer readLineAndTokenize() throws IOException {

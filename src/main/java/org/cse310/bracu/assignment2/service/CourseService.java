@@ -175,7 +175,7 @@ public class CourseService {
 
     public Set<Student> getStudentsByCourseId(String courseId) throws SQLException {
         Set<Student> students = new HashSet<>();
-        String sql = "SELECT User.*, Student.studentId FROM User" +
+        String sql = "SELECT User.*, Student.studentId, Student.version FROM User" +
                 " JOIN Student ON User.userId = Student.userId" +
                 " JOIN Student_Course ON Student.userId = Student_Course.studentId" +
                 " WHERE Student_Course.courseId = ?";

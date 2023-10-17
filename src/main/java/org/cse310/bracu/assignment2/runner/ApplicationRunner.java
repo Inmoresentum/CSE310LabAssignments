@@ -274,7 +274,7 @@ public class ApplicationRunner {
         } catch (SQLException e) {
             System.out.println(e);
         }
-        for (int i = 0; i < offeredCourses.size(); i++) {
+        for (int i = 0; i < Objects.requireNonNull(offeredCourses).size(); i++) {
             var curCourse = offeredCourses.get(i);
             pw.print((i + 1) + " " + curCourse.getCourseCode() + " section " + curCourse.getSection() +
                     " Total Seat " + curCourse.getTotalCapacity() + " seat remaining" + curCourse.getAvailableSeat() + " ");

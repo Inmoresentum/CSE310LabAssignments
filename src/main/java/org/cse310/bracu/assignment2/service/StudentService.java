@@ -237,12 +237,7 @@ public class StudentService {
             try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
                 prepareStatement.setString(1, studentId);
                 prepareStatement.setString(2, course.getCourseID());
-                System.out.println(course);
-                System.out.println(studentId);
-                System.out.println("Before this thing");
-                System.out.println(prepareStatement);
                 prepareStatement.execute();
-                System.out.println("After this thing");
                 courseService.updateCourse(course);
             }
         } catch (SQLException e) {

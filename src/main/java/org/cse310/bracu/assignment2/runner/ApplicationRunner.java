@@ -57,13 +57,18 @@ public class ApplicationRunner {
         courseService.addCourse(cse310Section1);
         courseService.addCourse(cse310Section2);
 
-        Student student = new Student(UUID.randomUUID().toString(), "whatever",
+        var student = new Student(UUID.randomUUID().toString(), "whatever",
                 "whatever@whatever.com", "admin", "20101396",
                 new HashSet<>(), 1);
         studentService.register(student.getName(),
                 student.getStudentID(),
                 student.getEmail(),
                 student.getEncryptedPassword());
+        var lecturer = new Lecturer(UUID.randomUUID().toString(),
+                "someone", "someone@someone.com",
+                "admin", UUID.randomUUID().toString(),
+                new HashSet<>());
+        lecturerService.register(lecturer.getName(), lecturer.getEmail(), "admin", UUID.randomUUID().toString());
         try {
             takeInputAndStartExecution();
             br.close();
@@ -142,11 +147,6 @@ public class ApplicationRunner {
     }
 
     private static void handleRegistration() throws IOException {
-//        if (Session.isSession()) {
-//            pw.println("You are already logged in as " + Session.getSession().getName());
-//            pw.println("If you need to register another account, please logout and try again.");
-//            return;
-//        }
         if (!Session.isSession())
             registerUnAuthenticatedUser();
         else if (Session.getSession().getUserType().equals(UserType.STUDENT)) {
@@ -155,7 +155,7 @@ public class ApplicationRunner {
     }
 
     private static void handleCourseCreationProcess() {
-        System.out.println("Creating some interesting course");
+        pw.println();
     }
 
     private static void registerUnAuthenticatedUser() throws IOException {

@@ -45,16 +45,25 @@ public class ApplicationRunner {
                 new HashSet<>(),
                 new HashSet<>(),
                 1);
-        var firstSchedule = new Schedule(DayOfWeek.SUNDAY, LocalTime.of(12, 30), LocalTime.of(13, 50), 1);
-        var secondSchedule = new Schedule(DayOfWeek.TUESDAY, LocalTime.of(12, 30), LocalTime.of(13, 50), 1);
+        var firstSchedule = new Schedule(DayOfWeek.SUNDAY,
+                LocalTime.of(12, 30),
+                LocalTime.of(13, 50), 1);
+        var secondSchedule = new Schedule(DayOfWeek.TUESDAY,
+                LocalTime.of(12, 30),
+                LocalTime.of(13, 50), 1);
         var scheduleList = List.of(firstSchedule, secondSchedule);
         cse310Section1.setSchedule(scheduleList);
         cse310Section2.setSchedule(scheduleList);
         courseService.addCourse(cse310Section1);
         courseService.addCourse(cse310Section2);
 
-        Student student = new Student(UUID.randomUUID().toString(), "whatever", "whatever@whatever.com", "admin", "20101396", new HashSet<>(), 1);
-        studentService.register(student.getName(), student.getStudentID(), student.getEmail(), student.getEncryptedPassword());
+        Student student = new Student(UUID.randomUUID().toString(), "whatever",
+                "whatever@whatever.com", "admin", "20101396",
+                new HashSet<>(), 1);
+        studentService.register(student.getName(),
+                student.getStudentID(),
+                student.getEmail(),
+                student.getEncryptedPassword());
         try {
             takeInputAndStartExecution();
             br.close();
@@ -77,6 +86,10 @@ public class ApplicationRunner {
                     Session.getSession().getUserType().equals(UserType.LECTURER) &&
                     curInput.equals("3")) {
                 handlePrintingRegisteredStudentByCourseAndSection();
+            } else if (Session.isSession() &&
+                    Session.getSession().getUserType().equals(UserType.STUDENT) &&
+                    curInput.equals("3") || !Session.isSession() && curInput.equals("3")) {
+                handlePrintingAllCoursesAndSeatStatus();
             } else if (curInput.equals("4")) {
                 handleLogoutOperation();
                 break;
@@ -247,7 +260,7 @@ public class ApplicationRunner {
         Session.invalidateSession();
     }
 
-    private static void handlePrintingRegisteredStudentByCourseAndSection() {
+    private static void handlePrintingRegisteredStudentByCourseAndSection() throws IOException {
         if (Session.isSession()
                 && !Session.getSession().getUserType().equals(UserType.LECTURER)) {
             throw new IllegalStateException("Must need to be a" +
@@ -259,9 +272,8 @@ public class ApplicationRunner {
             offeredCourses = courseService.findAllCourses();
         } catch (SQLException e) {
             System.out.println(e);
-            System.out.println("server seems to unavailable right now");
         }
-        for (int i = 0; i < Objects.requireNonNull(offeredCourses).size(); i++) {
+        for (int i = 0; i < offeredCourses.size(); i++) {
             var curCourse = offeredCourses.get(i);
             pw.print((i + 1) + " " + curCourse.getCourseCode() + " section " + curCourse.getSection() +
                     " Total Seat " + curCourse.getTotalCapacity() + " seat remaining" + curCourse.getAvailableSeat() + " ");
@@ -269,6 +281,24 @@ public class ApplicationRunner {
                 pw.print(schedule + " ");
             }
             pw.println();
+        }
+        pw.println((offeredCourses.size() + 1) + " Do nothing");
+        pw.print("Choose the which course and section you want to see: ");
+        pw.flush();
+        var courseIndex = Integer.parseInt(readLineAndTokenize().nextToken());
+        if (courseIndex == offeredCourses.size() + 1) return;
+        var courCourse = offeredCourses.get(courseIndex - 1);
+        try {
+            pw.print("Name");
+            pw.print("                      ");
+            pw.println("SID");
+            courseService.getStudentsByCourseId(courCourse.getCourseID()).forEach(student -> {
+                pw.print(student.getName());
+                pw.print("                      ");
+                pw.println(student.getStudentID());
+            });
+        } catch (SQLException e) {
+            System.out.println(e);
         }
     }
 

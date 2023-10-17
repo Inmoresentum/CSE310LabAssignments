@@ -73,7 +73,6 @@ public class CourseService {
             System.out.println("Consider taking another one");
             return;
         }
-        System.out.println("Before updating");
         System.out.println(course);
         String sql = "UPDATE Course SET courseCode = ?, totalCapacity = ?," +
                 " availableSeat = ?, version = version + 1" +
@@ -174,7 +173,7 @@ public class CourseService {
         return schedules;
     }
 
-    private Set<Student> getStudentsByCourseId(String courseId) throws SQLException {
+    public Set<Student> getStudentsByCourseId(String courseId) throws SQLException {
         Set<Student> students = new HashSet<>();
         String sql = "SELECT User.*, Student.studentId FROM User" +
                 " JOIN Student ON User.userId = Student.userId" +

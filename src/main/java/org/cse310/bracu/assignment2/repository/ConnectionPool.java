@@ -144,10 +144,6 @@ public class ConnectionPool {
             statement.execute(query);
         }
         releaseConnection(connection);
-        System.out.println("Trying to check some stuff");
-        for (var conn : connectionPool) {
-            System.out.println(conn.isClosed());
-        }
     }
 
     public void printStatusOfDBConnections() {

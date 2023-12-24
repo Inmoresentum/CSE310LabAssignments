@@ -44,9 +44,9 @@ To run the code or test thing out, you will need to have a couple of things
    git clone https://github.com/Inmoresentum/CSE310LabAssignments.git
    ```
    Now open `CSE310LabAssignments`
-   using IntelliJ IDEA and for maven wrapper and the necessary dependencies to be downloaded.
+   using IntelliJ IDEA and for wait maven wrapper and the necessary dependencies to be downloaded.
    Now you can click the play icon and have some **fun**.
-#### Set For Assignment 2:
+#### Setup For Assignment 2:
 You will need to have [MariaDB](https://mariadb.org/).
 The easiest way to get started is
 to spin up a [MariaDB container](https://hub.docker.com/_/mariadb) using [docker](https://www.docker.com).

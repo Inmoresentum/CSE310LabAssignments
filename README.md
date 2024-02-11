@@ -80,12 +80,14 @@ At this point, you can probably understand the repo structure.
 ### Lab Assignment 2
 
 Similarly, for Lab Assignment 2,
-the assignment file can be found [`src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_2.pdf`](src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_2.pdf) in this location and the solution [`src/main/java/org/cse310/bracu/assignment2`](src/main/java/org/cse310/bracu/assignment2).
+the assignment file can be found [`src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_2.pdf`](src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_2.pdf)
+in this location and the solution [`src/main/java/org/cse310/bracu/assignment2`](src/main/java/org/cse310/bracu/assignment2).
 There, similarly run the `Main.java` file. 
 
 **Note:** Before Running the `Lab Assignment 2 Main.java` file make sure that you already have installed all the necessary
-dependencies and MariaDB is running
-and there is already a Database created **CSE310DB** which is also mentioned in the [setup step](#set-for-assignment-2).
+dependencies, MariaDB is running
+and there is already a Database created named **CSE310DB**
+which is also mentioned in the [setup step](#set-for-assignment-2).
 
 <p align="center"></p>
 

@@ -3,10 +3,18 @@
 
 <div align="center">
     <h4 align="center" style="color: blueviolet">Necessary Tools</h4>
-    <img src="https://img.shields.io/badge/MariaDB 10+-003545?style=for-the-badge&logo=mariadb&logoColor=white"/>
-    <img src="https://img.shields.io/badge/jdk 17+-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white"/>
-    <img src="https://img.shields.io/badge/IntelliJIDEA 23+-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white"/>
-    <img src="https://img.shields.io/badge/apache_maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white"/>
+         <a href="https://github.com/wingkwong">
+             <img src="https://img.shields.io/badge/MariaDB 10+-003545?style=for-the-badge&logo=mariadb&logoColor=white"/>
+         </a>
+         <a href="https://openjdk.org/">
+             <img src="https://img.shields.io/badge/jdk 17+-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white"/>
+         </a>
+         <a href="https://www.jetbrains.com/idea/">
+             <img src="https://img.shields.io/badge/IntelliJIDEA 23+-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white"/>
+         </a>
+         <a href="https://maven.apache.org/">
+             <img src="https://img.shields.io/badge/apache_maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white"/>
+         </a>
 </div>
 
 This repository contains my CSE310 Lab Assignments that I had to do.

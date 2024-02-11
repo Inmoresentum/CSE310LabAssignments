@@ -40,6 +40,7 @@ To run the code or test thing out, you will need to have a couple of things
    javac --version
    ```
 2. [IntelliJ IDEA](https://www.jetbrains.com/idea/)
+
     It is recommended that you use [IntelliJ IDEA](https://www.jetbrains.com/idea/) ultimate edition
     which you can obtain using [GitHub student pack](https://education.github.com/pack).
 3. Finally, Clone the repo if you haven't already
@@ -54,25 +55,33 @@ To run the code or test thing out, you will need to have a couple of things
    Now open `CSE310LabAssignments`
    using IntelliJ IDEA and for wait maven wrapper and the necessary dependencies to be downloaded.
    Now you can click the play icon and have some **fun**.
+
 #### Setup For Assignment 2:
+
 You will need to have [MariaDB](https://mariadb.org/).
 The easiest way to get started is
 to spin up a [MariaDB container](https://hub.docker.com/_/mariadb) using [docker](https://www.docker.com).
 Once the MariaDB instance is running create a database named **CSE310DB**.
 
 ## Lab Files/ Assignment Files
+
 Lab files or assignment files can be found [`src/main/java/org/cse310/bracu/labfiles`](src/main/java/org/cse310/bracu/labfiles) in this location.
 There are total two lab assignments.
+
 ## Lab Assignments
+
 ### Lab Assignment 1
+
 The first Lab Assignment can be found [`src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_1.pdf`](src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_1.pdf).
 The solution of the lab assignments can be found [`src/main/java/org/cse310/bracu/assignment1`](src/main/java/org/cse310/bracu/assignment1) in this location.
 Just run [`Main.java`](src/main/java/org/cse310/bracu/assignment1/Main.java) file.
 At this point, you can probably understand the repo structure.
+
 ### Lab Assignment 2
+
 Similarly, for Lab Assignment 2,
 the assignment file can be found [`src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_2.pdf`](src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_2.pdf) in this location and the solution [`src/main/java/org/cse310/bracu/assignment2`](src/main/java/org/cse310/bracu/assignment2).
-There similarly run the `Main.java` file. 
+There, similarly run the `Main.java` file. 
 
 **Note:** Before Running the `Lab Assignment 2 Main.java` file make sure that you already have installed all the necessary
 dependencies and MariaDB is running
@@ -80,8 +89,8 @@ and there is already a Database created **CSE310DB** which is also mentioned in 
 
 <p align="center"></p>
 
-
 &#160;
+
 <p align="center">Copyright &copy; 2023-present 
    <a href="https://github.com/Inmoresentum" target="_blank">Inmoresentum</a>
 </p>

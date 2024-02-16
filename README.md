@@ -20,7 +20,9 @@
 This repository contains my CSE310 Lab Assignments that I had to do.
 
 # Setup
+
 To run the code or test thing out, you will need to have a couple of things
+
 1. java
 
    `jdk` version **17**
@@ -41,8 +43,8 @@ To run the code or test thing out, you will need to have a couple of things
    ```
 2. [IntelliJ IDEA](https://www.jetbrains.com/idea/)
 
-    It is recommended that you use [IntelliJ IDEA](https://www.jetbrains.com/idea/) ultimate edition
-    which you can obtain using [GitHub student pack](https://education.github.com/pack).
+   It is recommended that you use [IntelliJ IDEA](https://www.jetbrains.com/idea/) ultimate edition
+   which you can obtain using [GitHub student pack](https://education.github.com/pack).
 3. Finally, Clone the repo if you haven't already
 
    make sure that you have [git](https://git-scm.com/downloads) installed.
@@ -65,26 +67,32 @@ Once the MariaDB instance is running create a database named **CSE310DB**.
 
 ## Lab Files/ Assignment Files
 
-Lab files or assignment files can be found [`src/main/java/org/cse310/bracu/labfiles`](src/main/java/org/cse310/bracu/labfiles) in this location.
+Lab files or assignment files can be
+found [`src/main/java/org/cse310/bracu/labfiles`](src/main/java/org/cse310/bracu/labfiles) in this location.
 There are total two lab assignments.
 
 ## Lab Assignments
 
 ### Lab Assignment 1
 
-The first Lab Assignment can be found [`src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_1.pdf`](src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_1.pdf).
-The solution of the lab assignments can be found [`src/main/java/org/cse310/bracu/assignment1`](src/main/java/org/cse310/bracu/assignment1) in this location.
+The first Lab Assignment can be
+found [`src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_1.pdf`](src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_1.pdf).
+The solution of the lab assignments can be
+found [`src/main/java/org/cse310/bracu/assignment1`](src/main/java/org/cse310/bracu/assignment1) in this location.
 Just run [`Main.java`](src/main/java/org/cse310/bracu/assignment1/Main.java) file.
 At this point, you can probably understand the repo structure.
 
 ### Lab Assignment 2
 
 Similarly, for Lab Assignment 2,
-the assignment file can be found [`src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_2.pdf`](src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_2.pdf)
-in this location and the solution [`src/main/java/org/cse310/bracu/assignment2`](src/main/java/org/cse310/bracu/assignment2).
-There, similarly run the `Main.java` file. 
+the assignment file can be
+found [`src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_2.pdf`](src/main/java/org/cse310/bracu/labfiles/CSE310_Lab_Assignment_2.pdf)
+in this location and the
+solution [`src/main/java/org/cse310/bracu/assignment2`](src/main/java/org/cse310/bracu/assignment2).
+There, similarly run the `Main.java` file.
 
-**Note:** Before Running the `Lab Assignment 2 Main.java` file make sure that you already have installed all the necessary
+**Note:** Before Running the `Lab Assignment 2 Main.java` file make sure that you already have installed all the
+necessary
 dependencies, MariaDB is running
 and there is already a Database created named **CSE310DB**
 which is also mentioned in the [setup step](#set-for-assignment-2).
